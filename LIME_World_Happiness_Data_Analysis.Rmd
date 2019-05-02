@@ -84,6 +84,7 @@ The algorithms I will compare to OneR will be run via the caret package. Also us
 OneR only accepts categorical features. Because we have numerical features, we need to convert them to factors by splitting them into appropriate bins. While the original OneR algorithm splits the values into ever smaller factors, this has been changed in this R-implementation with the argument of preventing overfitting. We can either split the data into pre-defined numbers of buckets (by length, content or cluster) or we can use the optbin() function to obtain the optimal number of factors from pairwise logistic regression or information gain.
 ```{r 6.Modelling Data 1}
 set.seed(42)
+library(caret)
 index <- createDataPartition(data_15_16$Happiness.Score.l, p = 0.7, list = FALSE)
 train_data <- data_15_16[index, ]
 test_data  <- data_15_16[-index, ]
@@ -469,9 +470,9 @@ Run Neural Network model
 
 ```{r 20.Model}
 set.seed(42)
-model_nn <- caret::train(Happiness.Score.l ~ .,
+model_xgb <- caret::train(Happiness.Score.l ~ .,
                          data = train_data,
-                         method = "mlp",
+                         method = "xgbTree",
                          trControl = trainControl(method = "repeatedcv", 
                                                   number = 10, 
                                                   repeats = 5, 
@@ -526,7 +527,10 @@ test_data_wrong <- test_data %>%
 explanation_cor <- explain(test_data_cor, explainer, n_labels = 3, n_features = 5)
 explanation_wrong <- explain(test_data_wrong, explainer, n_labels = 3, n_features = 5)
 ```
-
+Plot explainer function
+```{r}
+plot_features(explanation_wrong, ncol = 3)
+```
 
 
 
